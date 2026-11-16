@@ -66,11 +66,11 @@ export function registerConfigCommands(program: Command): void {
       const json = !!cmd.optsWithGlobals().json;
       if (json) {
         console.log(
-          JSON.stringify({ dir: configDir, path: configPath }, null, 2)
+          JSON.stringify({ dir: configDir(), path: configPath() }, null, 2)
         );
       } else {
-        console.log(`dir:  ${configDir}`);
-        console.log(`path: ${configPath}`);
+        console.log(`dir:  ${configDir()}`);
+        console.log(`path: ${configPath()}`);
       }
     });
 }

@@ -25,9 +25,9 @@ export function registerLoginCommands(program: Command): void {
       saveConfig(cfg);
       const json = !!program.optsWithGlobals().json;
       if (json) {
-        console.log(JSON.stringify({ ok: true, path: configPath }));
+        console.log(JSON.stringify({ ok: true, path: configPath() }));
       } else {
-        console.log(`API key stored in ${configPath}`);
+        console.log(`API key stored in ${configPath()}`);
       }
     });
 
