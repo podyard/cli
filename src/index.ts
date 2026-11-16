@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /**
  * Podyard CLI — thin wrapper over the Podyard v1 API.
  *

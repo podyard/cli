@@ -14,9 +14,6 @@ importers:
       '@frontal-labs/error':
         specifier: ^0.7.0
         version: 0.7.0
-      '@incremental/sdk':
-        specifier: ^0.1.0
-        version: 0.1.2
       '@podyard/sdk':
         specifier: ^0.1.0
         version: 0.1.0
@@ -222,27 +219,6 @@ packages:
   '@frontal-labs/sandbox-sdk@0.2.0':
     resolution: {integrity: sha512-dJMSlY6r+ShpZPhxp5zHA6iKctW9nzf+U7/Csu5lSEpyqYuShAWgvUTbARZv4t5LZ3HOE9Hwxdt2XidhmO9G8g==}
     engines: {node: '>=20.0.0'}
-
-  '@incremental/client@0.1.1':
-    resolution: {integrity: sha512-MnZ0ZWgA96xTgd+UM4ysC8bZMKPaQ8erPbn/FaQEQc15CK4gQGoABS7eQKoltSkcShzxNJw09Wk2h87gs0FvIQ==}
-    engines: {node: '>=22.0.0'}
-    hasBin: true
-
-  '@incremental/engine@0.1.2':
-    resolution: {integrity: sha512-hEJBP2nwbX46s0A7Sy+I94umRbMP3wBjvJ2AkywAzMVh8XErmlSIs+n3KaaUGiuEeZwgX91ol2+LtBRPOlO+jw==}
-    engines: {node: '>=22.0.0'}
-    cpu: [arm64]
-    os: [darwin]
-    hasBin: true
-
-  '@incremental/sdk@0.1.2':
-    resolution: {integrity: sha512-DIeDfg9J42lNirl+6TGeceyxdsbYf5CaaorZu2x6Yh/KaJLblp8MX4tXXI21voXKixUgPyR9P2jJ7CxbMEY2uw==}
-    engines: {node: '>=22.0.0'}
-
-  '@incremental/vitest@0.1.2':
-    resolution: {integrity: sha512-/ImMfustjRDNMgXIUQKARrPxL0JII9MQGb7ET4bcINIHjrRv4to7RDC2NAHFvtrwE0TDA7nKT2j54T/cZ/bMWw==}
-    engines: {node: '>=22.0.0'}
-    hasBin: true
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1155,20 +1131,6 @@ snapshots:
     dependencies:
       '@ulid/ulid': 0.1.0
       zod: 4.6.7
-
-  '@incremental/client@0.1.1': {}
-
-  '@incremental/engine@0.1.2': {}
-
-  '@incremental/sdk@0.1.2':
-    dependencies:
-      '@incremental/client': 0.1.1
-      '@incremental/engine': 0.1.2
-      '@incremental/vitest': 0.1.2
-
-  '@incremental/vitest@0.1.2':
-    dependencies:
-      '@incremental/client': 0.1.1
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
