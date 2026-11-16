@@ -5,8 +5,14 @@
  * Auth: PODYARD_API_KEY env var or `podyard login` (writes ~/.podyard/config.json).
  */
 
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { PodyardClient } from "@podyard/sdk";
 import { Command } from "commander";
+
+const pkg = JSON.parse(
+  readFileSync(fileURLToPath(new URL("../package.json", import.meta.url)), "utf8"),
+);
 import { registerConfigCommands } from "./commands/config";
 import { registerKeyCommands } from "./commands/keys";
 import { registerLimitCommands } from "./commands/limits";
@@ -46,7 +52,7 @@ program
   .description(
     "Podyard CLI — manage pods, snapshots, templates, keys, and more"
   )
-  .version("0.1.0");
+  .version(pkg.version as string);
 
 const ctx: Ctx = { client: getClient, print };
 
