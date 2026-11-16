@@ -9,11 +9,8 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { PodyardClient } from "@podyard/sdk";
 import { Command } from "commander";
-
-const pkg = JSON.parse(
-  readFileSync(fileURLToPath(new URL("../package.json", import.meta.url)), "utf8"),
-);
 import { registerConfigCommands } from "./commands/config";
+import { registerInitCommand } from "./commands/init";
 import { registerKeyCommands } from "./commands/keys";
 import { registerLimitCommands } from "./commands/limits";
 import { registerLoginCommands } from "./commands/login";
@@ -22,6 +19,13 @@ import { registerSnapshotCommands } from "./commands/snapshots";
 import { registerTemplateCommands } from "./commands/templates";
 import { registerUsageCommands } from "./commands/usage";
 import { requireApiKey, resolveBaseUrl } from "./config";
+
+const pkg = JSON.parse(
+  readFileSync(
+    fileURLToPath(new URL("../package.json", import.meta.url)),
+    "utf8"
+  )
+);
 
 interface Ctx {
   client: () => PodyardClient;
@@ -58,6 +62,7 @@ const ctx: Ctx = { client: getClient, print };
 
 registerLoginCommands(program);
 registerConfigCommands(program);
+registerInitCommand(program);
 registerPodCommands(program, ctx);
 registerSnapshotCommands(program, ctx);
 registerTemplateCommands(program, ctx);

@@ -26,7 +26,7 @@ export function registerKeyCommands(program: Command, ctx: Ctx): void {
         }
         for (const k of res.items) {
           console.log(
-            `${k.id}  ${k.kind}  ${k.plan.padEnd(8)}  ${k.label ?? "-"}  ${k.revokedAt ? "revoked" : "active"}`
+            `${k.id}  ${k.kind}  ${k.plan.padEnd(8)}  ${k.label}  ${k.revokedAt ? "revoked" : "active"}`
           );
         }
       });
@@ -49,7 +49,7 @@ export function registerKeyCommands(program: Command, ctx: Ctx): void {
       }
       const res = await ctx.client().keys.create(body);
       ctx.print(res, json, () => {
-        console.log(`${res.id}  ${res.kind}  ${res.label ?? "-"}`);
+        console.log(`${res.id}  ${res.kind}  ${res.label}`);
         console.log(`key: ${res.key}`);
         console.log("\nThe full key is shown only once. Store it now.");
       });

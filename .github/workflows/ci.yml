@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
 
 concurrency:
@@ -15,14 +15,17 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ "22", "24" ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
-          node-version: "22"
+          node-version: ${{ matrix.node-version }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -38,5 +41,15 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
 
+      - name: Lint (biome)
+        run: pnpm run lint
+
       - name: Test
         run: pnpm run test
+
+      - name: Smoke test (built binary)
+        run: |
+          node dist/index.js --version
+          node dist/index.js --help > /dev/null
+          node dist/index.js pods --help > /dev/null
+          node dist/index.js init --help > /dev/null

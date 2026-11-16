@@ -1,0 +1,12 @@
+[package]
+name = "podyard-cli"
+version = "0.1.1"
+edition = "2021"
+publish = false
+description = "Podyard CLI (npm: @podyard/cli) — placeholder manifest; no Rust sources"
+
+# This repo is a TypeScript project (see package.json). This minimal
+# manifest exists only so Cargo-aware tooling finds a valid one.
+
+[workspace]
+members = []

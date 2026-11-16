@@ -3,6 +3,7 @@
  * Mocks the PodyardClient to test command logic without hitting the API.
  */
 
+import { Command } from "commander";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ---------------------------------------------------------------------------
@@ -77,8 +78,7 @@ const { registerLimitCommands } = await import("../src/commands/limits");
 const { registerKeyCommands } = await import("../src/commands/keys");
 const { registerLoginCommands } = await import("../src/commands/login");
 const { registerConfigCommands } = await import("../src/commands/config");
-
-import { Command } from "commander";
+const { registerInitCommand } = await import("../src/commands/init");
 
 function makeCtx() {
   const logs: string[] = [];
@@ -477,5 +477,106 @@ describe("config commands", () => {
     expect(names).toContain("get");
     expect(names).toContain("set");
     expect(names).toContain("path");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// init
+// ---------------------------------------------------------------------------
+
+describe("init command", () => {
+  it("registers the init command at top level", () => {
+    const program = makeProgram();
+    registerInitCommand(program);
+    const initCmd = program.commands.find((c) => c.name() === "init");
+    expect(initCmd).toBeDefined();
+  });
+
+  it("init scaffolds files in a temp directory", async () => {
+    const { mkdtempSync, rmSync, existsSync, readFileSync } = await import(
+      "node:fs"
+    );
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+
+    const tempDir = mkdtempSync(join(tmpdir(), "podyard-init-test-"));
+    const projectDir = join(tempDir, "my-project");
+
+    const exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
+      throw new Error("process.exit called");
+    }) as never);
+
+    try {
+      const program = makeProgram();
+      registerInitCommand(program);
+
+      // Run init with --dir pointing at our temp dir
+      const originalCwd = process.cwd();
+      process.chdir(tempDir);
+
+      await program.parseAsync([
+        "node",
+        "podyard",
+        "init",
+        "my-project",
+        "--dir",
+        tempDir,
+      ]);
+
+      process.chdir(originalCwd);
+
+      // Assert files were created
+      expect(existsSync(join(projectDir, "podyard.json"))).toBe(true);
+      expect(existsSync(join(projectDir, ".env.example"))).toBe(true);
+      expect(existsSync(join(projectDir, ".gitignore"))).toBe(true);
+      expect(existsSync(join(projectDir, "example.mjs"))).toBe(true);
+      expect(existsSync(join(projectDir, "README.md"))).toBe(true);
+
+      // podyard.json should have the right name
+      const manifest = JSON.parse(
+        readFileSync(join(projectDir, "podyard.json"), "utf-8")
+      );
+      expect(manifest.name).toBe("my-project");
+
+      // .env.example should mention PODYARD_API_KEY
+      const envExample = readFileSync(
+        join(projectDir, ".env.example"),
+        "utf-8"
+      );
+      expect(envExample).toContain("PODYARD_API_KEY");
+    } finally {
+      exitSpy.mockRestore();
+      rmSync(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("init with --lang python creates example.py", async () => {
+    const { mkdtempSync, rmSync, existsSync } = await import("node:fs");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+
+    const tempDir = mkdtempSync(join(tmpdir(), "podyard-init-py-"));
+    const projectDir = join(tempDir, "py-project");
+
+    try {
+      const program = makeProgram();
+      registerInitCommand(program);
+
+      await program.parseAsync([
+        "node",
+        "podyard",
+        "init",
+        "py-project",
+        "--lang",
+        "python",
+        "--dir",
+        tempDir,
+      ]);
+
+      expect(existsSync(join(projectDir, "example.py"))).toBe(true);
+      expect(existsSync(join(projectDir, "example.mjs"))).toBe(false);
+    } finally {
+      rmSync(tempDir, { recursive: true, force: true });
+    }
   });
 });
