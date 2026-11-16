@@ -25,7 +25,7 @@
     "@clack/prompts": "^1.1.0",
     "@frontal-labs/error": "^0.7.0",
     "@incremental/sdk": "^0.1.0",
-    "@podyard/sdk": "file:../podyard-sdk/podyard-sdk-0.1.0.tgz",
+    "@podyard/sdk": "^0.1.0",
     "commander": "^14.0.3",
     "nypm": "^0.6.5"
   },
@@ -34,5 +34,10 @@
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
