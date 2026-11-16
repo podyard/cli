@@ -1,0 +1,3 @@
+allowBuilds:
+  '@incremental/engine': true
+  esbuild: true
