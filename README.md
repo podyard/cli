@@ -12,10 +12,6 @@ templates, API keys, webhooks, plan limits, and usage from the terminal.
 - **npm package:** [`@podyard/cli`](https://www.npmjs.com/package/@podyard/cli)
 - **Repository:** `github.com/podyard/cli`
 
-> The `Cargo.toml` at the repo root is a placeholder so Cargo-aware
-> tooling behaves predictably; there are no Rust sources. See
-> `Cargo.md` for the full note.
-
 ## Quick start
 
 ```bash
