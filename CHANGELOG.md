@@ -1,5 +1,26 @@
 # @podyard/cli
 
+## [Unreleased]
+
+### Changes
+
+- **feat(webhooks)**: add `podyard webhooks list|create|get|delete` — manage
+  API webhooks.
+- **feat(pods)**: add `podyard pods snapshots <id>` — list snapshots of a pod.
+- **feat(config)**: support the `PODYARD_CONFIG_DIR` env var to override the
+  config directory (default `~/.podyard`); `configDir()`/`configPath()` now
+  resolve dynamically.
+- **feat(env)**: validate all environment variables through `src/env.ts`
+  (`@t3-oss/env-core` + zod). `PODYARD_API_KEY`, `PODYARD_BASE_URL`, and
+  `PODYARD_CONFIG_DIR` are now typed and validated on first read; every
+  `process.env` access in the CLI flows through `env()`. An invalid value
+  (e.g. a non-URL `PODYARD_BASE_URL`) exits with a clear error.
+- **build**: remove unused dependencies (`@clack/prompts`,
+  `@frontal-labs/error`, `nypm`) and the stale `pnpm-workspace.yaml`
+  (esbuild build approval now comes from `package.json#pnpm`).
+- **chore**: remove `commitlint.config.ts` and `scripts/lint-commit.sh` —
+  the validator is `scripts/lint-commit.mjs`, the single source of truth.
+
 ## 0.1.1
 
 ### Changes

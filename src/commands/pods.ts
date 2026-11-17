@@ -201,6 +201,35 @@ export function registerPodCommands(program: Command, ctx: Ctx): void {
     });
 
   pods
+    .command("snapshots <id>")
+    .description("List snapshots of a pod")
+    .option("--limit <n>", "max items", (v: string) => Number.parseInt(v, 10))
+    .option("--cursor <cursor>", "pagination cursor")
+    .option("--json", "output as JSON")
+    .action(
+      async (
+        id: string,
+        opts: { limit?: number; cursor?: string },
+        cmd: Command
+      ) => {
+        const json = !!cmd.optsWithGlobals().json;
+        const res = await ctx.client().pods.listSnapshots(id, {
+          ...(opts.limit ? { limit: opts.limit } : {}),
+          ...(opts.cursor ? { cursor: opts.cursor } : {}),
+        });
+        ctx.print(res, json, () => {
+          if (res.items.length === 0) {
+            console.log(`No snapshots for ${id}.`);
+            return;
+          }
+          for (const s of res.items) {
+            console.log(`${s.id}  ${s.sizeBytes ?? "?"} bytes  ${s.createdAt}`);
+          }
+        });
+      }
+    );
+
+  pods
     .command("fork <id>")
     .description("Fork a pod into N clones")
     .option("--n <count>", "number of clones (1-64)", "1")

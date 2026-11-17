@@ -1,7 +1,7 @@
 # Podyard CLI
 
 Command-line client for the Podyard platform. Manages pods, snapshots,
-templates, API keys, plan limits, and usage from the terminal.
+templates, API keys, webhooks, plan limits, and usage from the terminal.
 
 - **Language:** TypeScript (Node.js ≥ 18)
 - **Binary:** `podyard` (built with `tsup`)
@@ -37,12 +37,13 @@ Authenticate once with `podyard login pyd_live_...` (stored in
 | `podyard login <key>` / `logout`                                                 | Store / remove API key         |
 | `podyard config get\|set\|path`                                                  | Inspect / mutate CLI config    |
 | `podyard init [name]`                                                            | Scaffold a new Podyard project |
-| `podyard pods list\|create\|get\|destroy\|exec\|fs\|snapshot\|fork\|sleep\|wake` | Pod lifecycle                  |
-| `podyard snapshots get\|fork`                                                    | Snapshot operations            |
-| `podyard templates list\|get\|create\|delete`                                    | Template operations            |
-| `podyard usage list`                                                             | Recent usage events            |
-| `podyard limits`                                                                 | Plan limits + current usage    |
-| `podyard keys list\|create\|revoke`                                              | Manage API keys                |
+| `podyard pods list\|create\|get\|destroy\|exec\|fs\|snapshot\|snapshots\|fork\|sleep\|wake` | Pod lifecycle        |
+| `podyard snapshots get\|fork`                                                    | Snapshot operations  |
+| `podyard templates list\|get\|create\|delete`                                    | Template operations  |
+| `podyard usage list`                                                             | Recent usage events  |
+| `podyard limits`                                                                 | Plan limits + current usage |
+| `podyard keys list\|create\|revoke`                                              | Manage API keys      |
+| `podyard webhooks list\|create\|get\|delete`                                     | Manage API webhooks  |
 
 Every command accepts `--json` for stable machine-readable output.
 
@@ -52,6 +53,7 @@ Every command accepts `--json` for stable machine-readable output.
 .github/            CI (build, typecheck, test) and npm publish workflows
 src/
   index.ts          CLI entrypoint (commander program)
+  env.ts            Validated env vars (@t3-oss/env-core + zod)
   config.ts         ~/.podyard/config.json helpers
   commands/         One file per command group
 tests/              Vitest unit tests (SDK mocked)
@@ -67,20 +69,24 @@ pnpm install
 pnpm run dev         # tsup --watch
 pnpm run typecheck   # tsc --noEmit
 pnpm run test        # vitest run
-pnpm run check       # full local CI (typecheck + lint + test)
 ```
 
+`make check` runs the full local CI (typecheck + lint + test);
 `make help` lists all Makefile targets.
 
 ## Configuration
 
 The CLI reads `~/.podyard/config.json` for `apiKey` and `baseUrl`.
-Environment variables always take precedence:
+Environment variables always take precedence. All env vars are validated
+on first read via `src/env.ts` (`@t3-oss/env-core` + zod) — an invalid
+value (e.g. a malformed `PODYARD_BASE_URL`) exits with an error instead
+of silently falling back:
 
-| Variable           | Purpose                                         |
-| ------------------ | ----------------------------------------------- |
-| `PODYARD_API_KEY`  | API key (overrides config)                      |
-| `PODYARD_BASE_URL` | API base URL (overrides config and SDK default) |
+| Variable             | Purpose                                                 |
+| -------------------- | ------------------------------------------------------- |
+| `PODYARD_API_KEY`    | API key (overrides config)                              |
+| `PODYARD_BASE_URL`   | API base URL (overrides config and SDK default)         |
+| `PODYARD_CONFIG_DIR` | Config directory (default: `~/.podyard`)                |
 
 Inspect or mutate with `podyard config get\|set\|path`.
 

@@ -1,53 +1,65 @@
 /**
  * CLI configuration: reads/writes ~/.podyard/config.json and
  * resolves the API key from config or the PODYARD_API_KEY env var.
+ *
+ * The config directory can be overridden with PODYARD_CONFIG_DIR
+ * (useful for tests and CI sandboxes).
  */
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { env } from "./env";
 
 export interface CliConfig {
   apiKey?: string;
   baseUrl?: string;
 }
 
-const CONFIG_DIR = join(homedir(), ".podyard");
-const CONFIG_PATH = join(CONFIG_DIR, "config.json");
-
+/**
+ * Config directory: $PODYARD_CONFIG_DIR when set, otherwise ~/.podyard.
+ * Read through env() so every process.env access flows through the
+ * validated schema.
+ */
 export function configDir(): string {
-  return CONFIG_DIR;
+  const override = env().PODYARD_CONFIG_DIR;
+  if (override) {
+    return override;
+  }
+  return join(homedir(), ".podyard");
 }
 
 export function configPath(): string {
-  return CONFIG_PATH;
+  return join(configDir(), "config.json");
 }
 
 export function loadConfig(): CliConfig {
-  if (!existsSync(CONFIG_PATH)) {
+  const path = configPath();
+  if (!existsSync(path)) {
     return {};
   }
   try {
-    return JSON.parse(readFileSync(CONFIG_PATH, "utf-8")) as CliConfig;
+    return JSON.parse(readFileSync(path, "utf-8")) as CliConfig;
   } catch {
     return {};
   }
 }
 
 export function saveConfig(config: CliConfig): void {
-  if (!existsSync(CONFIG_DIR)) {
-    mkdirSync(CONFIG_DIR, { recursive: true });
+  const dir = configDir();
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
   }
-  writeFileSync(CONFIG_PATH, `${JSON.stringify(config, null, 2)}\n`);
+  writeFileSync(configPath(), `${JSON.stringify(config, null, 2)}\n`);
 }
 
 /**
  * Resolve the API key: env var PODYARD_API_KEY takes precedence over config.
  */
 export function resolveApiKey(): string | null {
-  const env = process.env.PODYARD_API_KEY;
-  if (env) {
-    return env;
+  const envKey = env().PODYARD_API_KEY;
+  if (envKey) {
+    return envKey;
   }
   const config = loadConfig();
   return config.apiKey ?? null;
@@ -57,9 +69,9 @@ export function resolveApiKey(): string | null {
  * Resolve the base URL: env var PODYARD_BASE_URL > config > SDK default.
  */
 export function resolveBaseUrl(): string | undefined {
-  const env = process.env.PODYARD_BASE_URL;
-  if (env) {
-    return env;
+  const envUrl = env().PODYARD_BASE_URL;
+  if (envUrl) {
+    return envUrl;
   }
   const config = loadConfig();
   return config.baseUrl;

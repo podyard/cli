@@ -60,7 +60,7 @@ pnpm run test -- -t "auth"   # run tests matching "auth"
 
 - Unit-test pure logic in isolation.
 - For commands that read/write config, point `PODYARD_CONFIG_DIR` at a temp
-  directory so tests don't touch `~/.config/podyard`.
+  directory so tests don't touch `~/.podyard`.
 - Keep tests deterministic — no real network, no `sleep`, no global state.
 
 ## Commit messages

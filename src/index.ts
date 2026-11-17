@@ -18,6 +18,7 @@ import { registerPodCommands } from "./commands/pods";
 import { registerSnapshotCommands } from "./commands/snapshots";
 import { registerTemplateCommands } from "./commands/templates";
 import { registerUsageCommands } from "./commands/usage";
+import { registerWebhookCommands } from "./commands/webhooks";
 import { requireApiKey, resolveBaseUrl } from "./config";
 
 const pkg = JSON.parse(
@@ -69,6 +70,7 @@ registerTemplateCommands(program, ctx);
 registerUsageCommands(program, ctx);
 registerLimitCommands(program, ctx);
 registerKeyCommands(program, ctx);
+registerWebhookCommands(program, ctx);
 
 program.parseAsync(process.argv).catch((err: unknown) => {
   const msg = err instanceof Error ? (err.message ?? String(err)) : String(err);

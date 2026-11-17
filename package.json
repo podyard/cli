@@ -43,11 +43,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@clack/prompts": "^1.1.0",
-    "@frontal-labs/error": "^0.7.0",
     "@podyard/sdk": "^0.1.0",
+    "@t3-oss/env-core": "^0.13.11",
     "commander": "^14.0.3",
-    "nypm": "^0.6.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",
@@ -63,10 +62,5 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
   }
 }

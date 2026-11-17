@@ -30,6 +30,7 @@ const {
   configDir,
   configPath,
 } = await import("../src/config");
+const { __resetEnv } = await import("../src/env");
 
 afterAll(() => {
   rmSync(tempHome, { recursive: true, force: true });
@@ -39,12 +40,19 @@ function clearEnv(name: string): void {
   // In Node.js, setting process.env.X = undefined sets the string "undefined".
   // Use Reflect.deleteProperty to truly unset the variable.
   Reflect.deleteProperty(process.env, name);
+  // The env module caches its first validation; reset it so the next
+  // access re-reads the (mutated) process.env.
+  __resetEnv();
 }
 
 afterEach(() => {
   // Clean up env vars between tests.
   clearEnv("PODYARD_API_KEY");
   clearEnv("PODYARD_BASE_URL");
+  clearEnv("PODYARD_CONFIG_DIR");
+  // The env module caches the validated schema; reset it so the next
+  // test re-validates against the freshly cleared process.env.
+  __resetEnv();
 });
 
 describe("config module", () => {
@@ -52,6 +60,23 @@ describe("config module", () => {
     it("returns a path under the test HOME", () => {
       expect(configDir()).toBe(join(tempHome, ".podyard"));
       expect(configPath()).toBe(join(tempHome, ".podyard", "config.json"));
+    });
+
+    it("respects PODYARD_CONFIG_DIR when set", () => {
+      const customDir = join(tempHome, "custom-config-dir");
+      process.env.PODYARD_CONFIG_DIR = customDir;
+      __resetEnv();
+      try {
+        expect(configDir()).toBe(customDir);
+        expect(configPath()).toBe(join(customDir, "config.json"));
+        // load/save must follow the override too.
+        saveConfig({ apiKey: "pyd_test_override" });
+        expect(loadConfig().apiKey).toBe("pyd_test_override");
+        expect(existsSync(join(customDir, "config.json"))).toBe(true);
+      } finally {
+        clearEnv("PODYARD_CONFIG_DIR");
+        rmSync(customDir, { recursive: true, force: true });
+      }
     });
   });
 
@@ -99,6 +124,7 @@ describe("config module", () => {
 
     it("prefers the PODYARD_API_KEY env var over config", () => {
       process.env.PODYARD_API_KEY = "pyd_live_envkey";
+      __resetEnv();
       saveConfig({ apiKey: "pyd_test_configkey" });
       expect(resolveApiKey()).toBe("pyd_live_envkey");
     });
@@ -119,6 +145,7 @@ describe("config module", () => {
 
     it("prefers PODYARD_BASE_URL env var over config", () => {
       process.env.PODYARD_BASE_URL = "http://env-url:3001";
+      __resetEnv();
       saveConfig({ baseUrl: "http://config-url:3000" });
       expect(resolveBaseUrl()).toBe("http://env-url:3001");
     });

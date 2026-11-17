@@ -18,6 +18,7 @@ const mockPods = {
   exec: vi.fn(),
   snapshot: vi.fn(),
   fork: vi.fn(),
+  listSnapshots: vi.fn(),
   sleep: vi.fn(),
   wake: vi.fn(),
   fs: {
@@ -53,6 +54,13 @@ const mockKeys = {
   revoke: vi.fn(),
 };
 
+const mockWebhooks = {
+  list: vi.fn(),
+  create: vi.fn(),
+  get: vi.fn(),
+  delete: vi.fn(),
+};
+
 const mockClient = {
   pods: mockPods,
   snapshots: mockSnapshots,
@@ -60,6 +68,7 @@ const mockClient = {
   usage: mockUsage,
   limits: mockLimits,
   keys: mockKeys,
+  webhooks: mockWebhooks,
 };
 
 vi.mock("@podyard/sdk", () => ({
@@ -76,6 +85,7 @@ const { registerTemplateCommands } = await import("../src/commands/templates");
 const { registerUsageCommands } = await import("../src/commands/usage");
 const { registerLimitCommands } = await import("../src/commands/limits");
 const { registerKeyCommands } = await import("../src/commands/keys");
+const { registerWebhookCommands } = await import("../src/commands/webhooks");
 const { registerLoginCommands } = await import("../src/commands/login");
 const { registerConfigCommands } = await import("../src/commands/config");
 const { registerInitCommand } = await import("../src/commands/init");
@@ -243,6 +253,20 @@ describe("pods commands", () => {
     await program.parseAsync(["node", "podyard", "pods", "sleep", "pod_1"]);
 
     expect(mockPods.sleep).toHaveBeenCalledWith("pod_1");
+  });
+
+  it("pods snapshots calls client.pods.listSnapshots", async () => {
+    const { ctx } = makeCtx();
+    mockPods.listSnapshots.mockResolvedValue({
+      items: [{ id: "snap_1", sizeBytes: 1024, createdAt: "2026-01-01" }],
+    });
+
+    const program = makeProgram();
+    registerPodCommands(program, ctx);
+
+    await program.parseAsync(["node", "podyard", "pods", "snapshots", "pod_1"]);
+
+    expect(mockPods.listSnapshots).toHaveBeenCalledWith("pod_1", {});
   });
 
   it("pods wake calls client.pods.wake", async () => {
@@ -578,5 +602,79 @@ describe("init command", () => {
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// webhooks
+// ---------------------------------------------------------------------------
+
+describe("webhooks", () => {
+  const fakeWebhook = {
+    id: "wh_1",
+    url: "https://example.com/hook",
+    events: ["pod.created"],
+    active: true,
+    createdAt: "2026-01-01",
+    updatedAt: "2026-01-01",
+  };
+
+  it("webhooks list calls client.webhooks.list", async () => {
+    const { ctx } = makeCtx();
+    mockWebhooks.list.mockResolvedValue({ items: [fakeWebhook] });
+
+    const program = makeProgram();
+    registerWebhookCommands(program, ctx);
+
+    await program.parseAsync(["node", "podyard", "webhooks", "list"]);
+
+    expect(mockWebhooks.list).toHaveBeenCalledWith({});
+  });
+
+  it("webhooks create calls client.webhooks.create with parsed events", async () => {
+    const { ctx } = makeCtx();
+    mockWebhooks.create.mockResolvedValue(fakeWebhook);
+
+    const program = makeProgram();
+    registerWebhookCommands(program, ctx);
+
+    await program.parseAsync([
+      "node",
+      "podyard",
+      "webhooks",
+      "create",
+      "https://example.com/hook",
+      "--events",
+      "pod.created, pod.destroyed",
+    ]);
+
+    expect(mockWebhooks.create).toHaveBeenCalledWith({
+      url: "https://example.com/hook",
+      events: ["pod.created", "pod.destroyed"],
+    });
+  });
+
+  it("webhooks get calls client.webhooks.get", async () => {
+    const { ctx } = makeCtx();
+    mockWebhooks.get.mockResolvedValue(fakeWebhook);
+
+    const program = makeProgram();
+    registerWebhookCommands(program, ctx);
+
+    await program.parseAsync(["node", "podyard", "webhooks", "get", "wh_1"]);
+
+    expect(mockWebhooks.get).toHaveBeenCalledWith("wh_1");
+  });
+
+  it("webhooks delete calls client.webhooks.delete", async () => {
+    const { ctx } = makeCtx();
+    mockWebhooks.delete.mockResolvedValue(undefined);
+
+    const program = makeProgram();
+    registerWebhookCommands(program, ctx);
+
+    await program.parseAsync(["node", "podyard", "webhooks", "delete", "wh_1"]);
+
+    expect(mockWebhooks.delete).toHaveBeenCalledWith("wh_1");
   });
 });

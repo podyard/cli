@@ -58,13 +58,13 @@ BREAKING CHANGE: the auth provider callback is now async.
 
 ## Validation
 
-- **CI**: the `validate-commit` job runs on every push and PR to `main`.
 - **Local**: `pnpm run lint:commit` validates the most recent commit message.
   Pass a message directly with:
   `pnpm run lint:commit "feat: my change"`.
 
-The validator is `commitlint` with the `@commitlint/config-conventional`
-preset (see `commitlint.config.ts`).
+The validator is `scripts/lint-commit.mjs` — a small plain-JS re-implementation
+of the Conventional Commits rules above, so it runs without any extra
+dependencies.
 
 ## When to use `BREAKING CHANGE`
 

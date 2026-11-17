@@ -5,7 +5,7 @@
 Podyard is a hosted platform for running short-lived, forkable compute
 "pods" (sandboxed execution environments). The CLI (`podyard`) is the
 official command-line interface for managing pods, snapshots, templates,
-API keys, plan limits, and usage from the terminal.
+API keys, webhooks, plan limits, and usage from the terminal.
 
 ## Installing
 
@@ -103,6 +103,7 @@ podyard pods fs read <id> <path>           # read a file (stdout)
 podyard pods fs write <id> <path>          # write a file (content from stdin)
 podyard pods fs delete <id> <path>         # delete a file
 podyard pods snapshot <id> [--name n]      # create a snapshot
+podyard pods snapshots <id> [--limit N] [--cursor C]  # list a pod's snapshots
 podyard pods fork <id> [--n 4]             # fork into N clones
 podyard pods sleep <id>                    # put to sleep (experimental)
 podyard pods wake <id>                     # wake a sleeping pod (experimental)
@@ -165,6 +166,21 @@ podyard keys create --label ci --kind live # create (full key shown once)
 podyard keys revoke <id>                   # revoke
 ```
 
+### `podyard webhooks`
+
+Manage API webhooks.
+
+```bash
+podyard webhooks list [--limit N] [--cursor C]   # list webhooks
+podyard webhooks create <url> --events pod.created,pod.destroyed \
+  [--inactive]                                   # create a webhook
+podyard webhooks get <id>                        # webhook details
+podyard webhooks delete <id>                     # delete
+```
+
+`--events` is a comma-separated list of event names (e.g. `pod.created`,
+`pod.destroyed`). `--inactive` creates the webhook in a disabled state.
+
 ## Output format
 
 Every command accepts `--json`. When set, output is a pretty-printed
@@ -178,7 +194,7 @@ Human output (default) is terse and line-oriented.
 
 ## Configuration file
 
-`~/.podyard/config.json`:
+`~/.podyard/config.json` (override the directory with `PODYARD_CONFIG_DIR`):
 
 ```json
 {
@@ -191,8 +207,9 @@ Environment variables always override the config file:
 
 | Variable           | Purpose      |
 | ------------------ | ------------ |
-| `PODYARD_API_KEY`  | API key      |
-| `PODYARD_BASE_URL` | API base URL |
+| `PODYARD_API_KEY`      | API key             |
+| `PODYARD_BASE_URL`     | API base URL        |
+| `PODYARD_CONFIG_DIR`   | Config directory (default: `~/.podyard`) |
 
 ## Exit codes
 
@@ -218,11 +235,12 @@ Environment variables always override the config file:
 .github/workflows/ci.yml        CI: typecheck, lint, test, build
 .github/workflows/release.yml   Release: publish to npm on tag
 src/index.ts                    CLI entrypoint
+src/env.ts                      Validated env vars (@t3-oss/env-core + zod)
 src/config.ts                   ~/.podyard/config.json helpers
 src/commands/                   One file per command group
 tests/                          Vitest unit tests (SDK mocked)
 scripts/ci.sh                   Local CI runner
-scripts/lint-commit.sh          Conventional Commits validator
+scripts/lint-commit.mjs         Conventional Commits validator
 scripts/release.sh              Version-bump + tag helper
 Dockerfile                      Multi-stage image (node:22-slim)
 ```
