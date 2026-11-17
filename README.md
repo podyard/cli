@@ -1,3 +1,5 @@
+![Podyard](banner.jpg)
+
 # Podyard CLI
 
 Command-line client for the Podyard platform. Manages pods, snapshots,
