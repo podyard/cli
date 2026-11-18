@@ -2,11 +2,11 @@
  * `podyard templates list|get|create|delete`
  */
 
-import type { CreateTemplateRequest, PodyardClient } from "@podyard/sdk";
+import type { CreateTemplateRequest, Podyard } from "@podyard/sdk";
 import type { Command } from "commander";
 
 interface Ctx {
-  client: () => PodyardClient;
+  client: () => Podyard;
   print: (value: unknown, json: boolean, human?: () => void) => void;
 }
 

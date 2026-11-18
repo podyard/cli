@@ -2,15 +2,11 @@
  * `podyard webhooks ...` — manage API webhooks.
  */
 
-import type {
-  CreateWebhookRequest,
-  PodyardClient,
-  Webhook,
-} from "@podyard/sdk";
+import type { CreateWebhookRequest, Podyard, Webhook } from "@podyard/sdk";
 import type { Command } from "commander";
 
 interface Ctx {
-  client: () => PodyardClient;
+  client: () => Podyard;
   print: (value: unknown, json: boolean, human?: () => void) => void;
 }
 

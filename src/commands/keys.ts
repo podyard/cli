@@ -2,11 +2,11 @@
  * `podyard keys list|create|revoke`
  */
 
-import type { CreateApiKeyRequest, PodyardClient } from "@podyard/sdk";
+import type { CreateApiKeyRequest, Podyard } from "@podyard/sdk";
 import type { Command } from "commander";
 
 interface Ctx {
-  client: () => PodyardClient;
+  client: () => Podyard;
   print: (value: unknown, json: boolean, human?: () => void) => void;
 }
 

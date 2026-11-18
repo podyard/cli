@@ -5,7 +5,7 @@ quality bar we hold every change to.
 
 ## Prerequisites
 
-- **Node.js 18+** (20+ recommended)
+- **Node.js 22+**
 - **pnpm 9+** (`corepack enable` is the easiest way to get a matching pnpm)
 - **Git**
 

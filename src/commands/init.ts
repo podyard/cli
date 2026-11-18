@@ -15,9 +15,9 @@ const TEMPLATE_SNIPPETS: Record<
   node: {
     lang: "node",
     file: "example.mjs",
-    code: `import { PodyardClient } from "@podyard/sdk";
+    code: `import { Podyard } from "@podyard/sdk";
 
-const client = new PodyardClient({ apiKey: process.env.PODYARD_API_KEY });
+const client = new Podyard({ apiKey: process.env.PODYARD_API_KEY });
 
 // List pods
 const pods = await client.pods.list();
@@ -32,11 +32,11 @@ for (const pod of pods.items) {
     code: `import os
 import requests
 
-base_url = os.environ.get("PODYARD_BASE_URL", "https://api.podyard.dev/v1")
+base_url = os.environ.get("PODYARD_BASE_URL", "https://api.podyard.dev")
 api_key = os.environ["PODYARD_API_KEY"]
 
 resp = requests.get(
-    f"{base_url}/pods",
+    f"{base_url}/v1/pods",
     headers={"Authorization": f"Bearer {api_key}"},
     timeout=30,
 )
@@ -92,7 +92,7 @@ function buildFiles(
         {
           name: projectName,
           version: "0.1.0",
-          sdk: "^0.1.0",
+          sdk: "^0.2.1",
           defaults: {
             templateId: null,
             cwd: "/workspace",
@@ -109,7 +109,7 @@ function buildFiles(
         "# Podyard API key (required) — create one at https://podyard.dev/settings/keys",
         "PODYARD_API_KEY=pyd_live_xxx",
         "# Optional: point at a custom API base URL",
-        "# PODYARD_BASE_URL=https://api.podyard.dev/v1",
+        "# PODYARD_BASE_URL=https://api.podyard.dev",
         "",
       ].join("\n"),
     },

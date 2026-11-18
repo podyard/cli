@@ -7,7 +7,7 @@
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { PodyardClient } from "@podyard/sdk";
+import { Podyard } from "@podyard/sdk";
 import { Command } from "commander";
 import { registerConfigCommands } from "./commands/config";
 import { registerInitCommand } from "./commands/init";
@@ -29,13 +29,13 @@ const pkg = JSON.parse(
 );
 
 interface Ctx {
-  client: () => PodyardClient;
+  client: () => Podyard;
   print: (value: unknown, json: boolean, human?: () => void) => void;
 }
 
-function getClient(): PodyardClient {
+function getClient(): Podyard {
   const apiKey = requireApiKey();
-  return new PodyardClient({
+  return new Podyard({
     apiKey,
     ...(resolveBaseUrl() ? { baseUrl: resolveBaseUrl() } : {}),
   });

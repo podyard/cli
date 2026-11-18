@@ -82,7 +82,7 @@ Inspect and mutate CLI configuration.
 podyard config path             # print dir + file path
 podyard config get              # print whole config (redacted-friendly)
 podyard config get apiKey       # print a single key
-podyard config set baseUrl https://api.example.com/v1
+podyard config set baseUrl https://api.example.com
 podyard config set apiKey pyd_live_xxx
 ```
 
@@ -199,7 +199,7 @@ Human output (default) is terse and line-oriented.
 ```json
 {
   "apiKey": "pyd_live_abc123",
-  "baseUrl": "https://api.podyard.dev/v1"
+  "baseUrl": "https://api.podyard.dev"
 }
 ```
 
@@ -207,8 +207,8 @@ Environment variables always override the config file:
 
 | Variable           | Purpose      |
 | ------------------ | ------------ |
-| `PODYARD_API_KEY`      | API key             |
-| `PODYARD_BASE_URL`     | API base URL        |
+| `PODYARD_API_KEY`      | API key                                  |
+| `PODYARD_BASE_URL`     | API base URL (the SDK appends `/v1`)     |
 | `PODYARD_CONFIG_DIR`   | Config directory (default: `~/.podyard`) |
 
 ## Exit codes

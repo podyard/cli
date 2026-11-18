@@ -4,11 +4,11 @@
  * Note: list and delete are not yet supported by the engine.
  */
 
-import type { PodyardClient } from "@podyard/sdk";
+import type { Podyard } from "@podyard/sdk";
 import type { Command } from "commander";
 
 interface Ctx {
-  client: () => PodyardClient;
+  client: () => Podyard;
   print: (value: unknown, json: boolean, human?: () => void) => void;
 }
 

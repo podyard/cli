@@ -32,11 +32,11 @@ describe("env", () => {
 
   it("exposes valid values", () => {
     setEnv("PODYARD_API_KEY", "pyd_live_123");
-    setEnv("PODYARD_BASE_URL", "https://api.example.com/v1");
+    setEnv("PODYARD_BASE_URL", "https://api.example.com");
     setEnv("PODYARD_CONFIG_DIR", "/tmp/podyard-config");
     const e = env();
     expect(e.PODYARD_API_KEY).toBe("pyd_live_123");
-    expect(e.PODYARD_BASE_URL).toBe("https://api.example.com/v1");
+    expect(e.PODYARD_BASE_URL).toBe("https://api.example.com");
     expect(e.PODYARD_CONFIG_DIR).toBe("/tmp/podyard-config");
   });
 

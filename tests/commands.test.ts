@@ -1,6 +1,6 @@
 /**
  * Unit tests for CLI command registration and basic behavior.
- * Mocks the PodyardClient to test command logic without hitting the API.
+ * Mocks the Podyard client to test command logic without hitting the API.
  */
 
 import { Command } from "commander";
@@ -72,7 +72,7 @@ const mockClient = {
 };
 
 vi.mock("@podyard/sdk", () => ({
-  PodyardClient: vi.fn(() => mockClient),
+  Podyard: vi.fn(() => mockClient),
 }));
 
 // ---------------------------------------------------------------------------
@@ -561,6 +561,13 @@ describe("init command", () => {
         readFileSync(join(projectDir, "podyard.json"), "utf-8")
       );
       expect(manifest.name).toBe("my-project");
+      expect(manifest.sdk).toBe("^0.2.1");
+
+      const nodeExample = readFileSync(
+        join(projectDir, "example.mjs"),
+        "utf-8"
+      );
+      expect(nodeExample).toContain("new Podyard(");
 
       // .env.example should mention PODYARD_API_KEY
       const envExample = readFileSync(

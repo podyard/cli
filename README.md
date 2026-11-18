@@ -5,7 +5,7 @@
 Command-line client for the Podyard platform. Manages pods, snapshots,
 templates, API keys, webhooks, plan limits, and usage from the terminal.
 
-- **Language:** TypeScript (Node.js ≥ 18)
+- **Language:** TypeScript (Node.js ≥ 22)
 - **Binary:** `podyard` (built with `tsup`)
 - **SDK:** [`@podyard/sdk`](https://www.npmjs.com/package/@podyard/sdk)
 - **License:** Apache-2.0 (see `LICENSE.md`)
@@ -83,7 +83,7 @@ of silently falling back:
 | Variable             | Purpose                                                 |
 | -------------------- | ------------------------------------------------------- |
 | `PODYARD_API_KEY`    | API key (overrides config)                              |
-| `PODYARD_BASE_URL`   | API base URL (overrides config and SDK default)         |
+| `PODYARD_BASE_URL`   | API base URL (the SDK appends `/v1`)                    |
 | `PODYARD_CONFIG_DIR` | Config directory (default: `~/.podyard`)                |
 
 Inspect or mutate with `podyard config get\|set\|path`.

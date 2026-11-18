@@ -7,12 +7,12 @@ import type {
   CreatePodRequest,
   CreateSnapshotRequest,
   ExecRequest,
-  PodyardClient,
+  Podyard,
 } from "@podyard/sdk";
 import type { Command } from "commander";
 
 interface Ctx {
-  client: () => PodyardClient;
+  client: () => Podyard;
   print: (value: unknown, json: boolean, human?: () => void) => void;
 }
 
